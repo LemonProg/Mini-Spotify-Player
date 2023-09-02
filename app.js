@@ -33,7 +33,7 @@ app.get('/connected', (req, res) => {
 
 app.get('/login', function(req, res) {
     var state = generateRandomString(16);
-    var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing user-read-recently-played';
+    var scope = 'user-read-playback-state user-modify-playback-state user-read-currently-playing';
   
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
