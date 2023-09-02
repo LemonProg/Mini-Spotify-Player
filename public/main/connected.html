@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Mini Player</title>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <section id="main">
+        <div id="content-div">
+            <div id="controls">
+                <button id="last"><img src="../src/previous.svg" alt="LAST"></button>
+                <button id="middle"><img id="picture"></button>
+                <button id="next"><img src="../src/next.svg" alt="NEXT"></button>
+            </div>
+            <h1></h1>
+            <h2></h2>
+        </div>
+    </section>
+
+    <script>
+        const token = new URLSearchParams(window.location.search).get('token');
+
+        const h1 = document.querySelector('h1');
+        const img = document.querySelector('#picture')
+        const artist = document.querySelector('h2')
+        const last = document.querySelector('#last')
+        const middle = document.querySelector('#middle')
+        const next = document.querySelector('#next')
+
+        function fetchAPI(token, endpoint, method) {
+            const currentUrl = window.location.href.split('connected')[0];
+            const url = currentUrl + "fetchAPI";
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    token: token,
+                    endpoint: endpoint,
+                    method: method,
+                })
+            };
+
+            return fetch(url, options);
+        }
+
+        function fetchResume(token, context, pos) {
+            const currentUrl = window.location.href.split('connected')[0];
+            const url = currentUrl + "fetchResume";
+
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    token: token,
+                    context_uri: context,
+                    position_ms: pos
+                })
+            };
+
+            return fetch(url, options);
+        }
+
+        fetchAPI(token, "https://api.spotify.com/v1/me/player", "GET").then(response => response.json())
+            .then(data => {
+
+                let current_title = data.item.name;
+                let current_img = data.item.album.images[1].url
+                let current_artist = data.item.artists[0].name;
+
+                h1.textContent = current_title
+                img.src = current_img
+                artist.textContent = current_artist
+            });
+
+        last.addEventListener('click', () => {
+            fetchAPI(token, "https://api.spotify.com/v1/me/player/previous", "POST").then(() => {
+                setTimeout(() => {
+                    location.reload()
+                }, 700)
+            })
+        })
+        next.addEventListener('click', () => {
+            fetchAPI(token, "https://api.spotify.com/v1/me/player/next", "POST").then(() => {
+                setTimeout(() => {
+                    location.reload()
+                }, 700)
+            })
+        })
+        middle.addEventListener('click', () => {
+            fetchAPI(token, "https://api.spotify.com/v1/me/player", "GET").then(response => response.json())
+            .then(data => {
+                let is_playing = data.is_playing;
+                let context_uri = data.item.uri
+                let position = data.progress_ms;
+
+                if (is_playing) {
+                    fetchAPI(token, "https://api.spotify.com/v1/me/player/pause", "PUT")
+                } else {
+                    fetchResume(token, context_uri, position)
+                }
+            })
+        })
+    </script>
+</body>
+</html>

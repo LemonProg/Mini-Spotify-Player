@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>home</title>
+</head>
+<body>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        #main {
+            max-width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            padding: 50px;
+            font-weight: bold;
+            font-size: 25px;
+            color: white;
+            background-color: #1ED760;
+            border: 5px black solid;
+            border-radius: 30px;
+        }
+    </style>
+
+    <section id="main">
+        <button>Spotify Connect</button>
+    </section>
+
+    <script>
+        document.querySelector("button").addEventListener('click', () => {
+            window.location.href = '/login';
+        })
+    </script>
+</body>
+</html>
